@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import './App.css'
 import { Segment, Input, Container, Header, Menu, Table } from 'semantic-ui-react'
 import TableHeader from './components/TableHeader'
 import trainService from './services/trains'
@@ -18,7 +17,8 @@ class App extends Component {
 
   componentDidMount = async () => {
     console.log('App.js compontentDidMount()')    
-    const stations = await trainService.getStations()
+    let stations = await trainService.getStations()
+    stations = stations.filter(station => station.passengerTraffic)
     this.setState({ stations }) 
   }
 
@@ -28,21 +28,22 @@ class App extends Component {
     await this.setState({ entry: formattedEntry })
 
     const stations = this.state.stations
-    let searchStation = stations.filter(station => station.stationName.substring(0).includes(this.state.entry))
+    let searchStation = stations.filter(station => station.stationName.includes(this.state.entry))
 
-    if(searchStation.length < 1 || searchStation.length > 10) {
-      return null
-    } else if(searchStation.length > 1) {
-      await this.setState({ suggestions: searchStation })
-      return null
+    if(searchStation.length < 1 || searchStation.length > 1) {
+     return null
     }
+    
+    
     searchStation = searchStation[0].stationShortCode
+    console.log('searchStation', searchStation)
     const data = await trainService.getTrains(searchStation)
+    console.log('data', data)
     let trains = await data.map(train => ({ 
       juna: train.trainType+' '+train.trainNumber,
       lahtoasema: stations.filter(station => train.timeTableRows[0].stationShortCode === station.stationShortCode)[0].stationName.split(' ')[0],
       paateasema: stations.filter(station => train.timeTableRows[train.timeTableRows.length -1].stationShortCode === station.stationShortCode)[0].stationName.split(' ')[0],
-      scheduledTime: this.formatTime(train.timeTableRows.filter(station => station.type === "ARRIVAL" && station.stationShortCode === searchStation)[0].scheduledTime),
+      scheduledTime: train.timeTableRows.filter(station => station.type === "ARRIVAL" && station.stationShortCode === searchStation)[0].scheduledTime,
       actualTime: train.timeTableRows.filter(station => station.type === "ARRIVAL" && station.stationShortCode === searchStation)[0].actualTime,
       cancelled: train.timeTableRows.filter(station => station.type === "ARRIVAL" && station.stationShortCode === searchStation)[0].cancelled
     }))
@@ -52,7 +53,10 @@ class App extends Component {
 
   formatTime = (timestamp) => {
     const offset = Math.abs(new Date().getTimezoneOffset() / 60)
-    const hours = Number(timestamp.substring(11, 13)) + offset
+    let hours = Number(timestamp.substring(11, 13)) + offset
+    if(hours > 23) {
+      hours -= 24
+    }
     return hours + timestamp.substring(13, 16)
   }
 
@@ -93,7 +97,7 @@ class App extends Component {
                 <Table.Cell>{train.lahtoasema}</Table.Cell>
                 <Table.Cell>{train.paateasema}</Table.Cell>
                 <Table.Cell>
-                  {train.scheduledTime}
+                  {this.formatTime(train.scheduledTime)}
                 </Table.Cell>
               </Table.Row>
             )}
