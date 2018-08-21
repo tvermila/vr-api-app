@@ -1,5 +1,6 @@
 import React from 'react'
 import { Table } from 'semantic-ui-react'
+import PropTypes from 'prop-types'
 
 const TableHeader = ({ activeItem }) => {
   return (
@@ -10,8 +11,10 @@ const TableHeader = ({ activeItem }) => {
         <Table.HeaderCell>Pääteasema</Table.HeaderCell>
         <Table.HeaderCell>{activeItem === 'lahtevat' ? 'Lähtee' : 'Saapuu'}</Table.HeaderCell>
       </Table.Row>
-    </Table.Header>    
+    </Table.Header>
   )
 }
+
+TableHeader.propTypes = { activeItem: PropTypes.string }
 
 export default TableHeader
