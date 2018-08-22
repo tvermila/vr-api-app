@@ -17,7 +17,7 @@ const TrainTable = ({ trains, activeItem, formatTime }) => {
               {formatTime(train.scheduledTime)}
               <br />
               <div style={{ color: train.liveEstimate > train.scheduledTime ? 'red' : 'green' }}>
-                {train.liveEstimate && train.liveEstimate !== train.scheduledTime ? `(${formatTime(train.liveEstimate)})` : ''}
+                {train.liveEstimate && train.differenceInMinutes !== 0 ? `(${formatTime(train.liveEstimate)})` : ''}
               </div>
               <div style={{ color: train.cancelled ? 'red' : '' }}>{train.cancelled ? 'cancelled' : ''}</div>
             </Table.Cell>

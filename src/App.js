@@ -58,7 +58,7 @@ class App extends Component {
       }
     })
 
-    arrivingTrains.sort((a, b) => a.scheduledTime > b.scheduledTime ? -1 : a.scheduledTime < b.scheduledTime ? 1 : 0).reverse()
+    arrivingTrains.sort((a, b) => a.scheduledTime < b.scheduledTime ? -1 : a.scheduledTime > b.scheduledTime ? 1 : 0)
     this.setState({ arrivingTrains })
   }
 
@@ -80,7 +80,7 @@ class App extends Component {
       }
     })
 
-    departingTrains.sort((a, b) => a.scheduledTime > b.scheduledTime ? -1 : a.scheduledTime < b.scheduledTime ? 1 : 0).reverse()
+    departingTrains.sort((a, b) => a.scheduledTime < b.scheduledTime ? -1 : a.scheduledTime > b.scheduledTime ? 1 : 0)
     this.setState({ departingTrains })
   }
 
