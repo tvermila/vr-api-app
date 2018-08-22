@@ -18,7 +18,7 @@ const SearchField = ({ handleEntryChange, suggestions, entry, clearEntry }) => {
         action={<Button onClick={clearEntry} />}
       />
       <datalist id='stations'>
-        {suggestions.map((s, i) => <option value={s.stationName} key={i} />)}
+        {suggestions.map((station, i) => <option value={station.stationName} key={i} />)}
       </datalist>
     </div>
   )
